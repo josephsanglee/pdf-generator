@@ -1,32 +1,37 @@
-var pdfButton = document.querySelector('.pdf-button');
+const droneDeployAPI = new DroneDeploy({ version: 1});
 
-var fetchTileDataFromPlan = function(api, plan) {
-  return api.Tiles.get({ planId: plan.id, layerName: 'ortho', zoom: 17 })
-  .then(function(tiles) {
-    console.log('this is the return', tiles);
+/************************API HELPER FUNCTIONS************************/
+
+const fetchPlan = (api) => {
+  return api.Plans.getCurrentlyViewed()
+  .then(plan => {
+    return { api, plan };
   });
 };
 
-var getPDF = function() {
-  new DroneDeploy({ version: 1 }).then(function(api) {
-    return { 
-      api: api,
-      plan: api.Plans.getCurrentlyViewed(),
-    };
-  })
-  .then(function(object) {
-    return object.plan
-    .then(function(plan) {
-      return fetchTileDataFromPlan(object.api, plan);
-    });
-  })
-  .then(function(tileInformation) {
-    console.log('tile info', tileInformation);
-    return tileInformations.tiles;
-  })
-  .then(function(tiles) {
+const fetchTileDataFromPlan = (apiAndPlan) => {
+  let api = apiAndPlan.api;
+  const plan = apiAndPlan.plan;
+
+  return api.Tiles.get({ planId: plan.id, layerName: 'ortho', zoom: 19 });
+};
+
+const fetchTiles = (tileInformation) => {
+  return tileInformation.tiles;
+};
+
+/***************************EVENT HANDLERS***************************/
+
+const exportPDF = () => {
+  droneDeployAPI
+  .then(fetchPlan)
+  .then(fetchTileDataFromPlan)
+  .then(fetchTiles)
+  .then(tiles => {
     console.log(tiles);
   });
 };
 
-pdfButton.addEventListener('click', getPDF);
+$('document').ready(() => {
+  $('.pdf-button').on('click', exportPDF);
+});
