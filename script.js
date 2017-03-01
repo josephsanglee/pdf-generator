@@ -13,10 +13,11 @@ const fetchTileDataFromPlan = (apiAndPlan) => {
   let api = apiAndPlan.api;
   const plan = apiAndPlan.plan;
 
-  return api.Tiles.get({ planId: plan.id, layerName: 'ortho', zoom: 19 });
+  return api.Tiles.get({ planId: plan.id, layerName: 'ortho', zoom: 17 });
 };
 
 const fetchTiles = (tileInformation) => {
+  console.log(tileInformation);
   return tileInformation.tiles;
 };
 
@@ -28,7 +29,27 @@ const exportPDF = () => {
   .then(fetchTileDataFromPlan)
   .then(fetchTiles)
   .then(tiles => {
-    console.log(tiles);
+    const doc = new jsPDF();
+    // const myImage = new Image();
+    const myHeaders = new Headers();
+    const myInit = {
+      method: 'GET',
+      headers: myHeaders,
+      mode: 'no-cors',
+      cache: 'default',
+    };
+
+    fetch(tiles[0], myInit)
+    .then(response => console.log(response));
+
+    // myImage.src = tiles[0];
+    // myImage.crossOrigin = 'Anonymous';
+
+    // myImage.onload = function() {
+    //   doc.addImage(myImage, 'png', 5, 5, 40, 10);
+
+    //   doc.save('map.pdf');
+    // };
   });
 };
 
