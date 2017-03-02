@@ -9,7 +9,7 @@ const fetchPlan = (api) => {
   });
 };
 
-const fetchTileDataFromPlan = (apiAndPlan) => {
+const fetchTileData = (apiAndPlan) => {
   let api = apiAndPlan.api;
   const plan = apiAndPlan.plan;
 
@@ -105,7 +105,7 @@ const exportPDF = () => {
 
   droneDeployAPI
   .then(fetchPlan)
-  .then(fetchTileDataFromPlan)
+  .then(fetchTileData)
   .then(fetchTiles)
   .then(fetchTileImageData)
   .then(convertToBlobs)
