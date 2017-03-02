@@ -23,6 +23,9 @@ const fetchTiles = (tileInformation) => {
 
 /************************PDF HELPER FUNCTIONS************************/
 
+// Uses a proxy server to enable cross-origin requests by adding
+// CORS headers to the proxied request.
+// Returns an array of image data from the requested resources.
 const fetchTileImageData = (tiles) => {
   const tilesDataPromises = tiles.map((tileURL) => {
     return fetch(`https://dd-app-proxy-server.herokuapp.com/${tileURL}`);
@@ -31,14 +34,21 @@ const fetchTileImageData = (tiles) => {
   return Promise.all(tilesDataPromises);
 };
 
+// Converts the image data to blobs, which are objects that
+// allow you to use the blob as if it was a file on the browser.
 const convertToBlobs = (tileImageData) => {
   return Promise.all(tileImageData.map(imageData => imageData.blob()));
 };
 
+// Converts the blobs to object URLs so that they can be used as 
+// sources for HTMLImageElement instances that will be added to 
+// the PDF.
 const convertToObjectUrls = (blobs) => {
   return Promise.all(blobs.map(blob => URL.createObjectURL(blob)));
 };
 
+// Maps the tiles  with the proper coordinates so they do not
+// Overlap on the PDF.
 const createTileCoordinates = (doc, urls) => {
   const topMargin = 50;
   const imageSize = 35;
@@ -68,6 +78,8 @@ const createTileCoordinates = (doc, urls) => {
   });
 };
 
+
+// Creates and saves the PDF document using the jsPDF library.
 const createPDF = (objectUrls) => {
   const doc = new jsPDF();
 
@@ -86,6 +98,7 @@ const createPDF = (objectUrls) => {
 
 /***************************EVENT HANDLERS***************************/
 
+//Exports the PDF to be downloaded by the user. Woo!
 const exportPDF = () => {
   $('#icon-text').empty();
   $('#icon-text').append('Generating...');
